@@ -1,7 +1,7 @@
 import gui.IHM;
 
 /**
- * Created by Cyril on 08/04/2016.
+ * I am an example from the TP.
  */
 public class UtilisateurPanneau {
 

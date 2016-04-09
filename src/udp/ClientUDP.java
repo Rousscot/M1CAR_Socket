@@ -17,7 +17,9 @@ public class ClientUDP {
 
     public ClientUDP(String address, Integer port) throws SocketException, UnknownHostException {
         this.openSocket();
+        System.out.println("Address: " + address);
         this.address = InetAddress.getByName(address);
+        System.out.println("Port: " + port);
         this.port = port;
         this.initPossibilities();
     }

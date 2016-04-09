@@ -22,7 +22,7 @@ public class ServerUDP {
         return new DatagramSocket(SOCKET);
     }
 
-    public static HashMap initCommands() {
+    public static HashMap<String, BiFunction<String, IHM, String>> initCommands() {
         HashMap<String, BiFunction<String, IHM, String>> map = new HashMap<>();
         map.put("afficher", (String rest, IHM ihm) -> {
             ihm.ajouterLigne(rest);
@@ -57,6 +57,8 @@ public class ServerUDP {
 
             String[] strings = builder.toString().split(" ", 2);
             String result = commands.getOrDefault(strings[0], (String order, IHM gui) -> "ERREUR : Ordre inconnu").apply(strings[1], ihm);
+
+            (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), paquet.getAddress(), paquet.getPort()));
 
         }
     }

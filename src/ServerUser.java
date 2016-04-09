@@ -3,7 +3,7 @@ import udp.ServerUDP;
 import java.io.IOException;
 
 /**
- * I am main able to user the UDP server
+ * I am main able to use the UDP server
  */
 public class ServerUser {
 

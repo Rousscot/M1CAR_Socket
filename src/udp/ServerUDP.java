@@ -11,6 +11,10 @@ import java.util.function.BiFunction;
 
 /**
  * I am a class to answer the question 1 of TP1.
+ *
+ * Implementation details:
+ *
+ * To avoid multiple if or try catch I create a dictionary mapping all possible commands with a lambda expression to execute.
  */
 public class ServerUDP {
 
@@ -18,41 +22,65 @@ public class ServerUDP {
     protected static final int SIZEPAQUET = 512;
     protected IHM gui;
     protected DatagramSocket socket;
+
+    /**
+     * I am a map that store a lambda to execute for each actions I can handle.
+     */
     protected HashMap<String, BiFunction<String, IHM, String>> commands;
+
+    /**
+     * If I go the false the server will stop.
+     */
     protected Boolean stop;
 
+    /**
+     * I am a constructor that will launch the IHM, build a map with the different commands I can handle and init the socket.
+     * @throws SocketException is raise if I cannot open the socket.
+     */
     public ServerUDP() throws SocketException {
         this.launchGUI();
-        this.commands = this.initCommands();
+        this.initCommands();
         this.initSocket();
         this.stop = false;
     }
 
+    /**
+     * I launch the IHM.
+     */
     public void launchGUI() {
         gui = new IHM("Ma  borne d’affichage");
         IHM.mettreListenerSortieProgramme(gui);
         gui.setVisible(true);
     }
 
+    /**
+     * I init the socket.
+     * @throws SocketException raised if I cannot open the socket.
+     */
     public void initSocket() throws SocketException {
         this.socket = new DatagramSocket(SOCKET);
     }
 
-    public HashMap<String, BiFunction<String, IHM, String>> initCommands() {
-        HashMap<String, BiFunction<String, IHM, String>> map = new HashMap<>();
-        map.put("afficher", (String rest, IHM ihm) -> {
+    /**
+     * I build a dictionary with all the actions I manage and a lambda to execute.
+     */
+    public void initCommands() {
+        this.commands = new HashMap<>();
+        commands.put("afficher", (String rest, IHM ihm) -> {
             ihm.ajouterLigne(rest);
             return "Ok : Ordre execute";
         });
-        map.put("effacer", (String rest, IHM ihm) -> {
+        commands.put("effacer", (String rest, IHM ihm) -> {
             ihm.raz();
             return "Ok : Ordre execute";
         });
-        return map;
     }
 
+    /**
+     * I launch the server.
+     * @throws IOException if there is a problem with a datagram paquet.
+     */
     public void launch() throws IOException {
-
         while (!this.stop) {
             DatagramPacket paquet = new DatagramPacket(new byte[SIZEPAQUET], SIZEPAQUET);
             socket.receive(paquet);
@@ -63,14 +91,17 @@ public class ServerUDP {
                 builder.append((char) array[i]);
             }
 
-            String[] strings = builder.toString().split(" ", 2);
-            String result = commands.getOrDefault(strings[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(strings[1], gui);
+            String[] receivedMessages = builder.toString().split(" ", 2);
+            String result = commands.getOrDefault(receivedMessages[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(receivedMessages[1], gui);
 
             (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), paquet.getAddress(), paquet.getPort()));
 
         }
     }
 
+    /**
+     * I stop the server and close the socket.
+     */
     public void stop(){
         this.stop = true;
         this.socket.close();

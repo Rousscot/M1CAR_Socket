@@ -11,6 +11,7 @@ public class ClientUser {
         try {
             ClientUDP client = new ClientUDP("192.168.0.11", 8000);
             client.sendRandomMessage();
+            client.closeSocket();
         } catch (IOException e) {
             e.printStackTrace();
         }

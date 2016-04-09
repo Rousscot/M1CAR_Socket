@@ -57,6 +57,7 @@ public class ClientUDP {
     public void sendRandomMessage() throws IOException {
         System.out.println("Create packet");
         String message = this.randomMessage();
+        System.out.println("Message selected: " + message);
         DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), this.address, this.port);
         System.out.println("Send packet");
         this.socket.send(packet);

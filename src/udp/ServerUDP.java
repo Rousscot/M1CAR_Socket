@@ -19,7 +19,7 @@ import java.util.function.BiFunction;
 public class ServerUDP {
 
     protected static final int SOCKET = 8000;
-    protected static final int SIZEPAQUET = 512;
+    protected static final int SIZEPACKET = 512;
     protected IHM gui;
     protected DatagramSocket socket;
 
@@ -78,23 +78,23 @@ public class ServerUDP {
 
     /**
      * I launch the server.
-     * @throws IOException if there is a problem with a datagram paquet.
+     * @throws IOException if there is a problem with a datagram packet.
      */
     public void launch() throws IOException {
         while (!this.stop) {
-            DatagramPacket paquet = new DatagramPacket(new byte[SIZEPAQUET], SIZEPAQUET);
-            socket.receive(paquet);
+            DatagramPacket packet = new DatagramPacket(new byte[SIZEPACKET], SIZEPACKET);
+            socket.receive(packet);
 
-            byte[] array = paquet.getData();
+            byte[] array = packet.getData();
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < paquet.getLength(); i++) {
+            for (int i = 0; i < packet.getLength(); i++) {
                 builder.append((char) array[i]);
             }
 
             String[] receivedMessages = builder.toString().split(" ", 2);
             String result = commands.getOrDefault(receivedMessages[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(receivedMessages[1], gui);
 
-            (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), paquet.getAddress(), paquet.getPort()));
+            (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), packet.getAddress(), packet.getPort()));
 
         }
     }

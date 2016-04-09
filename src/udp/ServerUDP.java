@@ -11,9 +11,9 @@ import java.util.function.BiFunction;
 
 /**
  * I am a class to answer the question 1 of TP1.
- *
+ * <p>
  * Implementation details:
- *
+ * <p>
  * To avoid multiple if or try catch I create a dictionary mapping all possible commands with a lambda expression to execute.
  */
 public class ServerUDP {
@@ -35,6 +35,7 @@ public class ServerUDP {
 
     /**
      * I am a constructor that will launch the IHM, build a map with the different commands I can handle and init the socket.
+     *
      * @throws SocketException is raise if I cannot open the socket.
      */
     public ServerUDP() throws SocketException {
@@ -56,6 +57,7 @@ public class ServerUDP {
 
     /**
      * I init the socket.
+     *
      * @throws SocketException raised if I cannot open the socket.
      */
     public void initSocket() throws SocketException {
@@ -81,6 +83,7 @@ public class ServerUDP {
 
     /**
      * I launch the server.
+     *
      * @throws IOException if there is a problem with a datagram packet.
      */
     public void launch() throws IOException {
@@ -98,7 +101,14 @@ public class ServerUDP {
 
             System.out.println("Execute action");
             String[] receivedMessages = builder.toString().split(" ", 2);
-            String result = commands.getOrDefault(receivedMessages[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(receivedMessages[1], gui);
+            String rest;
+            try {
+                rest = receivedMessages[1];
+            } catch (IndexOutOfBoundsException e) {
+                rest = "";
+            }
+            String result = commands.getOrDefault(receivedMessages[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(rest, gui);
+
 
             System.out.println("Send result");
             (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), packet.getAddress(), packet.getPort()));
@@ -109,7 +119,7 @@ public class ServerUDP {
     /**
      * I stop the server and close the socket.
      */
-    public void stop(){
+    public void stop() {
         System.out.println("Stop server.");
         this.stop = true;
         this.socket.close();

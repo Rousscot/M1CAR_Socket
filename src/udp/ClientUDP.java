@@ -36,10 +36,10 @@ public class ClientUDP {
 
     public void initPossibilities() {
         this.possibilities = new HashSet<>();
-        this.possibilities.add("affiche Salut");
-        this.possibilities.add("affiche Coucou");
-        this.possibilities.add("affiche Comment ca va ?");
-        this.possibilities.add("affiche :)");
+        this.possibilities.add("afficher Salut");
+        this.possibilities.add("afficher Coucou");
+        this.possibilities.add("afficher Comment ca va ?");
+        this.possibilities.add("afficher :)");
         this.possibilities.add("effacer");
         this.possibilities.add("effacer");
         this.possibilities.add("effacer");

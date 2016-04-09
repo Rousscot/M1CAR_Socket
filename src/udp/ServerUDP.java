@@ -48,6 +48,7 @@ public class ServerUDP {
      * I launch the IHM.
      */
     public void launchGUI() {
+        System.out.println("Launch GUI");
         gui = new IHM("Ma  borne d’affichage");
         IHM.mettreListenerSortieProgramme(gui);
         gui.setVisible(true);
@@ -58,6 +59,7 @@ public class ServerUDP {
      * @throws SocketException raised if I cannot open the socket.
      */
     public void initSocket() throws SocketException {
+        System.out.println("Open socket");
         this.socket = new DatagramSocket(SOCKET);
     }
 
@@ -65,6 +67,7 @@ public class ServerUDP {
      * I build a dictionary with all the actions I manage and a lambda to execute.
      */
     public void initCommands() {
+        System.out.println("Init commands");
         this.commands = new HashMap<>();
         commands.put("afficher", (String rest, IHM ihm) -> {
             ihm.ajouterLigne(rest);
@@ -82,18 +85,22 @@ public class ServerUDP {
      */
     public void launch() throws IOException {
         while (!this.stop) {
+            System.out.println("Wait for a message...");
             DatagramPacket packet = new DatagramPacket(new byte[SIZEPACKET], SIZEPACKET);
             socket.receive(packet);
 
+            System.out.println("Get data");
             byte[] array = packet.getData();
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < packet.getLength(); i++) {
                 builder.append((char) array[i]);
             }
 
+            System.out.println("Execute action");
             String[] receivedMessages = builder.toString().split(" ", 2);
             String result = commands.getOrDefault(receivedMessages[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(receivedMessages[1], gui);
 
+            System.out.println("Send result");
             (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), packet.getAddress(), packet.getPort()));
 
         }
@@ -103,6 +110,7 @@ public class ServerUDP {
      * I stop the server and close the socket.
      */
     public void stop(){
+        System.out.println("Stop server.");
         this.stop = true;
         this.socket.close();
     }

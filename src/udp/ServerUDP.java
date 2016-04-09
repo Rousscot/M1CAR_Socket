@@ -16,13 +16,29 @@ public class ServerUDP {
 
     protected static final int SOCKET = 8000;
     protected static final int SIZEPAQUET = 512;
+    protected IHM gui;
+    protected DatagramSocket socket;
+    protected HashMap<String, BiFunction<String, IHM, String>> commands;
+    protected Boolean stop;
 
-
-    public static DatagramSocket initSocket() throws SocketException {
-        return new DatagramSocket(SOCKET);
+    public ServerUDP() throws SocketException {
+        this.launchGUI();
+        this.commands = this.initCommands();
+        this.initSocket();
+        this.stop = false;
     }
 
-    public static HashMap<String, BiFunction<String, IHM, String>> initCommands() {
+    public void launchGUI() {
+        gui = new IHM("Ma  borne d’affichage");
+        IHM.mettreListenerSortieProgramme(gui);
+        gui.setVisible(true);
+    }
+
+    public void initSocket() throws SocketException {
+        this.socket = new DatagramSocket(SOCKET);
+    }
+
+    public HashMap<String, BiFunction<String, IHM, String>> initCommands() {
         HashMap<String, BiFunction<String, IHM, String>> map = new HashMap<>();
         map.put("afficher", (String rest, IHM ihm) -> {
             ihm.ajouterLigne(rest);
@@ -35,17 +51,9 @@ public class ServerUDP {
         return map;
     }
 
-    public static void main(String[] args) throws IOException {
+    public void launch() throws IOException {
 
-        IHM ihm = new IHM("Ma  borne d’affichage");
-        IHM.mettreListenerSortieProgramme(ihm);
-        ihm.setVisible(true);
-
-        HashMap<String, BiFunction<String, IHM, String>> commands = ServerUDP.initCommands();
-
-        DatagramSocket socket = ServerUDP.initSocket();
-
-        while (true) {
+        while (!this.stop) {
             DatagramPacket paquet = new DatagramPacket(new byte[SIZEPAQUET], SIZEPAQUET);
             socket.receive(paquet);
 
@@ -56,11 +64,16 @@ public class ServerUDP {
             }
 
             String[] strings = builder.toString().split(" ", 2);
-            String result = commands.getOrDefault(strings[0], (String order, IHM gui) -> "ERREUR : Ordre inconnu").apply(strings[1], ihm);
+            String result = commands.getOrDefault(strings[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(strings[1], gui);
 
             (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), paquet.getAddress(), paquet.getPort()));
 
         }
+    }
+
+    public void stop(){
+        this.stop = true;
+        this.socket.close();
     }
 }
 

@@ -9,11 +9,11 @@ import java.util.*;
  */
 public class ClientUDP {
 
+    protected static final int SIZEPACKET = 512;
     protected DatagramSocket socket;
     protected InetAddress address;
     protected int port;
     protected Set<String> possibilities;
-    protected static final int SIZEPACKET = 512;
 
     public ClientUDP(String address, Integer port) throws SocketException, UnknownHostException {
         this.openSocket();
@@ -23,14 +23,16 @@ public class ClientUDP {
     }
 
     public void openSocket() throws SocketException {
+        System.out.println("Open Socket");
         this.socket = new DatagramSocket();
     }
 
-    public void closeSocket(){
+    public void closeSocket() {
+        System.out.println("Close Socket");
         this.socket.close();
     }
 
-    public void initPossibilities(){
+    public void initPossibilities() {
         this.possibilities = new HashSet<>();
         this.possibilities.add("affiche Salut");
         this.possibilities.add("affiche Coucou");
@@ -45,23 +47,29 @@ public class ClientUDP {
         this.possibilities.add(":(");
     }
 
-    public String randomMessage(){
+    public String randomMessage() {
+        System.out.println("Select random message");
         List<String> asList = new ArrayList<>(this.possibilities);
         Collections.shuffle(asList);
         return asList.get(0);
     }
 
     public void sendRandomMessage() throws IOException {
+        System.out.println("Create packet");
         String message = this.randomMessage();
-        this.socket.send(new DatagramPacket(message.getBytes(), message.length(), this.port));
+        DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), this.address, this.port);
+        System.out.println("Send packet");
+        this.socket.send(packet);
         this.manageAnswer();
     }
 
     public void manageAnswer() throws IOException {
+        System.out.println("Wait answer...");
         DatagramPacket packet = new DatagramPacket(new byte[SIZEPACKET], SIZEPACKET);
         this.socket.receive(packet);
+        System.out.println("Print packet");
         byte[] array = packet.getData();
-        for(byte bit : array) {
+        for (byte bit : array) {
             System.out.print(Character.toString((char) bit));
         }
         System.out.println();

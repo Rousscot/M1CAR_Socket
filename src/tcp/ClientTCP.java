@@ -60,14 +60,13 @@ public class ClientTCP {
         String message = this.randomMessage();
         System.out.println("Message selected: " + message);
         System.out.println("Send packet");
-        (new DataOutputStream(socket.getOutputStream())).writeBytes(message);
+        (new DataOutputStream(socket.getOutputStream())).writeBytes(message + "\n");
         this.manageAnswer();
     }
 
     public void manageAnswer() throws IOException {
         System.out.println("Wait answer...");
-        System.out.println("Print packet");
-        System.out.println((new BufferedReader(new InputStreamReader(System.in))).readLine());
+        System.out.println((new BufferedReader(new InputStreamReader(this.socket.getInputStream())).readLine()));
 
     }
 

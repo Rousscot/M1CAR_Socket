@@ -86,6 +86,7 @@ public class ServerTCP {
             } catch (IndexOutOfBoundsException e) {
                 rest = "";
             }
+
             String result = commands.getOrDefault(receivedMessages[0], (String order, IHM ihm) -> "ERREUR : Ordre inconnu").apply(rest, gui);
 
             System.out.println("Send result");

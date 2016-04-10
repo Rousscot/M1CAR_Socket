@@ -1,24 +1,20 @@
-package tcp;
+package clients;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.*;
 
 /**
- * Created by Cyril on 10/04/2016.
+ * I am the TCP version of the client.
  */
-public class ClientTCP {
+public class ClientTCP extends AbstractClient {
 
     protected Socket socket;
-    protected Set<String> possibilities;
 
     public ClientTCP(String address, Integer port) throws IOException {
-        this.openSocket(address, port);
-        this.initPossibilities();
-
+        super(address, port);
     }
 
     public void openSocket(String address, Integer port) throws IOException {
@@ -31,28 +27,6 @@ public class ClientTCP {
     public void closeSocket() throws IOException {
         System.out.println("Close Socket");
         this.socket.close();
-    }
-
-    public void initPossibilities() {
-        this.possibilities = new HashSet<>();
-        this.possibilities.add("afficher Salut");
-        this.possibilities.add("afficher Coucou");
-        this.possibilities.add("afficher Comment ca va ?");
-        this.possibilities.add("afficher :)");
-        this.possibilities.add("effacer");
-        this.possibilities.add("effacer");
-        this.possibilities.add("effacer");
-        this.possibilities.add("Salut");
-        this.possibilities.add("Autre");
-        this.possibilities.add("Error");
-        this.possibilities.add(":(");
-    }
-
-    public String randomMessage() {
-        System.out.println("Select random message");
-        List<String> asList = new ArrayList<>(this.possibilities);
-        Collections.shuffle(asList);
-        return asList.get(0);
     }
 
     public void sendRandomMessage() throws IOException {

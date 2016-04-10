@@ -1,5 +1,4 @@
-import tcp.ClientTCP;
-import udp.ClientUDP;
+import clients.ClientTCP;
 
 import java.io.IOException;
 

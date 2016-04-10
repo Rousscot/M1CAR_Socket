@@ -1,4 +1,4 @@
-import udp.ServerUDP;
+import servers.ServerUDP;
 
 import java.io.IOException;
 

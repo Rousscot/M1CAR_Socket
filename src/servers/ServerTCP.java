@@ -15,6 +15,7 @@ public class ServerTCP extends AbstractServer {
     protected ServerSocket socket;
     protected Socket connectionSocket;
 
+
     public ServerTCP() throws IOException {
         super();
     }
@@ -28,26 +29,38 @@ public class ServerTCP extends AbstractServer {
         while (!this.stop) {
             System.out.println("Open connection");
             this.connectionSocket = this.socket.accept();
-
-            System.out.println("Get data");
-            String[] receivedMessages = (new BufferedReader(new InputStreamReader(this.connectionSocket.getInputStream()))).readLine().split(" ", 2);
-
-            System.out.println("Execute action");
-            String rest;
-            try {
-                rest = receivedMessages[1];
-            } catch (IndexOutOfBoundsException e) {
-                rest = "";
-            }
-
-            String result = commands.getOrDefault(receivedMessages[0], this.getErrorLambda()).apply(rest, this.gui);
-
-            System.out.println("Send result");
-            (new DataOutputStream(connectionSocket.getOutputStream())).writeBytes(result);
+            this.loopTreatment();
 
             System.out.println("Close socket");
             this.connectionSocket.close();
         }
+    }
+
+    public void loopTreatment() throws IOException {
+        System.out.println("Get data");
+        String[] receivedMessages = (new BufferedReader(new InputStreamReader(this.connectionSocket.getInputStream()))).readLine().split(" ", 2);
+
+        String result = this.executeAction(receivedMessages);
+
+        System.out.println("Send result");
+        (new DataOutputStream(connectionSocket.getOutputStream())).writeBytes(result + "\n");
+
+        //Loop
+        if (!this.stop) {
+            this.loopTreatment();
+        }
+    }
+
+    public String executeAction(String[] receivedMessages) {
+        System.out.println("Execute action");
+        String rest;
+        try {
+            rest = receivedMessages[1];
+        } catch (IndexOutOfBoundsException e) {
+            rest = "";
+        }
+
+        return commands.getOrDefault(receivedMessages[0], this.getErrorLambda()).apply(rest, this.gui);
     }
 
     public void stop() throws IOException {

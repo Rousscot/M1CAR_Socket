@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Created by Cyril on 09/04/2016.
  */
-public class ClientUser {
+public class ClientUDPMain {
 
     public static void main(String[] args) {
         try {

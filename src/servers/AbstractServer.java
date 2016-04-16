@@ -56,18 +56,15 @@ public abstract class AbstractServer {
     public void initCommands() {
         System.out.println("Init commands");
         this.commands = new HashMap<>();
-        commands.put("afficher", (String rest, IHM ihm) -> {
+        this.commands.put("afficher", (String rest, IHM ihm) -> {
             ihm.ajouterLigne(rest);
             return "Ok : Ordre execute";
         });
-        commands.put("effacer", (String rest, IHM ihm) -> {
+        this.commands.put("effacer", (String rest, IHM ihm) -> {
             ihm.raz();
             return "Ok : Ordre execute";
         });
-    }
-
-    public BiFunction<String, IHM, String> getErrorLambda(){
-        return (String order, IHM ihm) -> "ERREUR : Ordre inconnu";
+        this.commands.put("error", (String order, IHM ihm) -> "ERREUR : Ordre inconnu");
     }
 
     /**

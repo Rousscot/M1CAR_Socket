@@ -53,7 +53,7 @@ public class ServerUDP extends AbstractServer {
             } catch (IndexOutOfBoundsException e) {
                 rest = "";
             }
-            String result = this.commands.getOrDefault(receivedMessages[0], this.getErrorLambda()).apply(rest, this.gui);
+            String result = this.commands.getOrDefault(receivedMessages[0], this.commands.get("error")).apply(rest, this.gui);
 
             System.out.println("Send result");
             (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), packet.getAddress(), packet.getPort()));

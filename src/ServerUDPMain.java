@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * I am main able to use the UDP server
  */
-public class ServerUser {
+public class ServerUDPMain {
 
     public static void main(String[] args) {
         try {

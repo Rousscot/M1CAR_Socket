@@ -58,10 +58,6 @@ public class ServerTCP extends AbstractServer {
             this.commands = commands;
         }
 
-        public BiFunction<String, IHM, String> getErrorLambda() {
-            return (String order, IHM ihm) -> "ERREUR : Ordre inconnu";
-        }
-
         public void run() {
             System.out.println("Get data");
             String[] receivedMessages = new String[0];
@@ -92,7 +88,7 @@ public class ServerTCP extends AbstractServer {
                 rest = "";
             }
 
-            return commands.getOrDefault(receivedMessages[0], this.getErrorLambda()).apply(rest, this.gui);
+            return commands.getOrDefault(receivedMessages[0], this.commands.get("error")).apply(rest, this.gui);
         }
 
     }

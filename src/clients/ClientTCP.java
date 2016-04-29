@@ -12,9 +12,22 @@ import java.net.Socket;
 public class ClientTCP extends AbstractClient {
 
     protected Socket socket;
+    protected BufferedReader br;
+    protected DataOutputStream dos;
 
     public ClientTCP(String address, Integer port) throws IOException {
         super(address, port);
+        this.initStreams();
+    }
+
+    public void initStreams() {
+        try {
+            this.br = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.dos = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            this.log("Error. Cannot instanciate the streams :(");
+        }
     }
 
     public void openSocket(String address, Integer port) throws IOException {
@@ -34,13 +47,13 @@ public class ClientTCP extends AbstractClient {
         String message = this.randomMessage();
         this.log("Message selected: " + message);
         this.log("Send packet");
-        (new DataOutputStream(socket.getOutputStream())).writeBytes(message + "\n");
+        dos.writeBytes(message + "\n");
         this.manageAnswer();
     }
 
     public void manageAnswer() throws IOException {
         this.log("Wait answer...");
-        System.out.println((new BufferedReader(new InputStreamReader(this.socket.getInputStream())).readLine()));
+        this.log(br.readLine());
 
     }
 

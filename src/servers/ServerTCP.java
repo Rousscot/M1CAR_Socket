@@ -45,19 +45,31 @@ public class ServerTCP extends AbstractServer {
     public class ClientHandler implements Runnable {
 
         protected Socket connectionSocket;
-
         protected HashMap<String, Function<String, String>> commands;
+        protected BufferedReader br;
+        protected DataOutputStream dos;
 
         public ClientHandler(Socket socket, HashMap<String, Function<String, String>> commands) {
             this.connectionSocket = socket;
             this.commands = commands;
+            this.initStreams();
+        }
+
+        public void initStreams() {
+            try {
+                this.br = new BufferedReader(new InputStreamReader(this.connectionSocket.getInputStream()));
+                this.dos = new DataOutputStream(connectionSocket.getOutputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+                this.log("Error. Cannot instanciate the streams :(");
+            }
         }
 
         public void run() {
             this.log("Get data");
             String receivedMessages = "";
             try {
-                receivedMessages = (new BufferedReader(new InputStreamReader(this.connectionSocket.getInputStream()))).readLine();
+                receivedMessages = br.readLine();
             } catch (IOException e) {
                 e.printStackTrace(); //TODO
             }
@@ -66,7 +78,7 @@ public class ServerTCP extends AbstractServer {
 
             this.log("Send result" + result);
             try {
-                (new DataOutputStream(connectionSocket.getOutputStream())).writeBytes(result + "\n");
+                this.dos.writeBytes(result + "\n");
             } catch (IOException e) {
                 e.printStackTrace();//TODO
             }

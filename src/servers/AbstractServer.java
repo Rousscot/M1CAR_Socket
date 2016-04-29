@@ -5,6 +5,7 @@ import gui.IHM;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * I am an abstract class to not duplicate the code between UDP and TCP.
@@ -21,7 +22,7 @@ public abstract class AbstractServer {
     /**
      * I am a map that store a lambda to execute for each actions I can handle.
      */
-    protected HashMap<String, BiFunction<String, IHM, String>> commands;
+    protected HashMap<String, Function<String, String>> commands;
 
     /**
      * If I go the false the server will stop.
@@ -56,15 +57,15 @@ public abstract class AbstractServer {
     public void initCommands() {
         this.log("Init commands");
         this.commands = new HashMap<>();
-        this.commands.put("afficher", (String rest, IHM ihm) -> {
-            ihm.ajouterLigne(rest);
+        this.commands.put("afficher", (String rest) -> {
+            this.gui.ajouterLigne(rest);
             return "Ok : Ordre execute";
         });
-        this.commands.put("effacer", (String rest, IHM ihm) -> {
-            ihm.raz();
+        this.commands.put("effacer", (String rest) -> {
+            this.gui.raz();
             return "Ok : Ordre execute";
         });
-        this.commands.put("error", (String order, IHM ihm) -> "ERREUR : Ordre inconnu");
+        this.commands.put("error", (String order) -> "ERREUR : Ordre inconnu");
     }
 
     /**

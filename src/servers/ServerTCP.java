@@ -1,7 +1,5 @@
 package servers;
 
-import gui.IHM;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * I am a class that implement an TCP server.
@@ -34,7 +32,7 @@ public class ServerTCP extends AbstractServer {
         while (!this.stop) {
             this.log("Open client socket");
             this.connexionSocket = this.socket.accept();
-            new Thread(new ClientHandler(connexionSocket, this.gui, this.commands)).start();
+            new Thread(new ClientHandler(connexionSocket, this.commands)).start();
         }
     }
 
@@ -48,13 +46,10 @@ public class ServerTCP extends AbstractServer {
 
         protected Socket connectionSocket;
 
-        protected IHM gui;
+        protected HashMap<String, Function<String, String>> commands;
 
-        protected HashMap<String, BiFunction<String, IHM, String>> commands;
-
-        public ClientHandler(Socket socket, IHM gui, HashMap<String, BiFunction<String, IHM, String>> commands) {
+        public ClientHandler(Socket socket, HashMap<String, Function<String, String>> commands) {
             this.connectionSocket = socket;
-            this.gui = gui;
             this.commands = commands;
         }
 
@@ -88,7 +83,7 @@ public class ServerTCP extends AbstractServer {
                 rest = "";
             }
 
-            return commands.getOrDefault(receivedMessages.split(" ")[0], this.commands.get("error")).apply(rest, this.gui);
+            return commands.getOrDefault(receivedMessages.split(" ")[0], this.commands.get("error")).apply(rest);
         }
 
         public void log(String message){

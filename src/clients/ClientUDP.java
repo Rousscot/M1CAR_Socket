@@ -20,16 +20,16 @@ public class ClientUDP extends AbstractClient {
     }
 
     public void openSocket(String address, Integer port) throws IOException {
-        System.out.println("Address: " + address);
+        this.log("Address: " + address);
         this.address = InetAddress.getByName(address);
-        System.out.println("Port: " + port);
+        this.log("Port: " + port);
         this.port = port;
-        System.out.println("Open Socket");
+        this.log("Open Socket");
         this.socket = new DatagramSocket();
     }
 
     public void closeSocket() {
-        System.out.println("Close Socket");
+        this.log("Close Socket");
         this.socket.close();
     }
 
@@ -39,11 +39,11 @@ public class ClientUDP extends AbstractClient {
      * @throws IOException Raised if there is a problem during the sending or reception of the message.
      */
     public void sendRandomMessage() throws IOException {
-        System.out.println("Create packet");
+        this.log("Create packet");
         String message = this.randomMessage();
-        System.out.println("Message selected: " + message);
+        this.log("Message selected: " + message);
         DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), this.address, this.port);
-        System.out.println("Send packet");
+        this.log("Send packet");
         this.socket.send(packet);
         this.manageAnswer();
     }
@@ -54,10 +54,10 @@ public class ClientUDP extends AbstractClient {
      * @throws IOException Raised if there is a problem during the reception.
      */
     public void manageAnswer() throws IOException {
-        System.out.println("Wait answer...");
+        this.log("Wait answer...");
         DatagramPacket packet = new DatagramPacket(new byte[SIZEPACKET], SIZEPACKET);
         this.socket.receive(packet);
-        System.out.println("Print packet");
+        this.log("Print packet");
         byte[] array = packet.getData();
         for (byte bit : array) {
             System.out.print(Character.toString((char) bit));

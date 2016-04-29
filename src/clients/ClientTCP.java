@@ -18,28 +18,28 @@ public class ClientTCP extends AbstractClient {
     }
 
     public void openSocket(String address, Integer port) throws IOException {
-        System.out.println("Address: " + address);
-        System.out.println("Port: " + port);
-        System.out.println("Open Socket");
+        this.log("Address: " + address);
+        this.log("Port: " + port);
+        this.log("Open Socket");
         this.socket = new Socket(address, port);
     }
 
     public void closeSocket() throws IOException {
-        System.out.println("Close Socket");
+        this.log("Close Socket");
         this.socket.close();
     }
 
     public void sendRandomMessage() throws IOException {
-        System.out.println("Select message");
+        this.log("Select message");
         String message = this.randomMessage();
-        System.out.println("Message selected: " + message);
-        System.out.println("Send packet");
+        this.log("Message selected: " + message);
+        this.log("Send packet");
         (new DataOutputStream(socket.getOutputStream())).writeBytes(message + "\n");
         this.manageAnswer();
     }
 
     public void manageAnswer() throws IOException {
-        System.out.println("Wait answer...");
+        this.log("Wait answer...");
         System.out.println((new BufferedReader(new InputStreamReader(this.socket.getInputStream())).readLine()));
 
     }

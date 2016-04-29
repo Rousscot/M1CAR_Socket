@@ -42,6 +42,7 @@ public abstract class AbstractClient {
      * Init the possibilities of message to send to the server
      */
     public void initPossibilities() {
+        this.log("Build possibilities");
         this.possibilities = new HashSet<>();
         this.possibilities.add("afficher Salut");
         this.possibilities.add("afficher Coucou");
@@ -61,7 +62,7 @@ public abstract class AbstractClient {
      * @return the selected message
      */
     public String randomMessage() {
-        System.out.println("Select random message");
+        this.log("Select random message");
         List<String> asList = new ArrayList<>(this.possibilities);
         Collections.shuffle(asList);
         return asList.get(0);
@@ -78,5 +79,9 @@ public abstract class AbstractClient {
      * @throws IOException Raised if there is a problem during the reception.
      */
     public abstract void manageAnswer() throws IOException;
+
+    public void log(String message){
+        System.out.println("Client : " + message);
+    }
 
 }

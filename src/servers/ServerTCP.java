@@ -26,20 +26,20 @@ public class ServerTCP extends AbstractServer {
     }
 
     public void initSocket() throws IOException {
-        System.out.println("Open socket");
+        this.log("Open server socket");
         this.socket = new ServerSocket(SOCKET);
     }
 
     public void launch() throws IOException {
         while (!this.stop) {
-            System.out.println("Open connection");
+            this.log("Open client socket");
             this.connexionSocket = this.socket.accept();
             new Thread(new ClientHandler(connexionSocket, this.gui, this.commands)).start();
         }
     }
 
     public void stop() throws IOException {
-        System.out.println("Stop server.");
+        this.log("Stop server.");
         this.stop = true;
         this.socket.close();
     }
@@ -59,17 +59,17 @@ public class ServerTCP extends AbstractServer {
         }
 
         public void run() {
-            System.out.println("Get data");
-            String[] receivedMessages = new String[0];
+            this.log("Get data");
+            String receivedMessages = "";
             try {
-                receivedMessages = (new BufferedReader(new InputStreamReader(this.connectionSocket.getInputStream()))).readLine().split(" ", 2);
+                receivedMessages = (new BufferedReader(new InputStreamReader(this.connectionSocket.getInputStream()))).readLine();
             } catch (IOException e) {
                 e.printStackTrace(); //TODO
             }
 
             String result = this.executeAction(receivedMessages);
 
-            System.out.println("Send result");
+            this.log("Send result" + result);
             try {
                 (new DataOutputStream(connectionSocket.getOutputStream())).writeBytes(result + "\n");
             } catch (IOException e) {
@@ -79,16 +79,20 @@ public class ServerTCP extends AbstractServer {
             this.run();
         }
 
-        public String executeAction(String[] receivedMessages) {
-            System.out.println("Execute action");
+        public String executeAction(String receivedMessages) {
+            this.log("Execute action : " + receivedMessages);
             String rest;
             try {
-                rest = receivedMessages[1];
+                rest = receivedMessages.split(" ")[1];
             } catch (IndexOutOfBoundsException e) {
                 rest = "";
             }
 
-            return commands.getOrDefault(receivedMessages[0], this.commands.get("error")).apply(rest, this.gui);
+            return commands.getOrDefault(receivedMessages.split(" ")[0], this.commands.get("error")).apply(rest, this.gui);
+        }
+
+        public void log(String message){
+            System.out.println("Server : " + message);
         }
 
     }

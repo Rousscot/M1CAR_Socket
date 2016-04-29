@@ -44,7 +44,7 @@ public abstract class AbstractServer {
      * I launch the IHM.
      */
     public void launchGUI() {
-        System.out.println("Launch GUI");
+        this.log("Launch GUI");
         gui = new IHM("Ma  borne d’affichage");
         IHM.mettreListenerSortieProgramme(gui);
         gui.setVisible(true);
@@ -54,7 +54,7 @@ public abstract class AbstractServer {
      * I build a dictionary with all the actions I manage and a lambda to execute.
      */
     public void initCommands() {
-        System.out.println("Init commands");
+        this.log("Init commands");
         this.commands = new HashMap<>();
         this.commands.put("afficher", (String rest, IHM ihm) -> {
             ihm.ajouterLigne(rest);
@@ -85,5 +85,9 @@ public abstract class AbstractServer {
      * I stop the server and close the socket.
      */
     public abstract void stop() throws IOException;
+
+    public void log(String message){
+        System.out.println("Server : " + message);
+    }
 
 }

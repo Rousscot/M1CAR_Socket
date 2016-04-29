@@ -23,7 +23,7 @@ public class ServerUDP extends AbstractServer {
      * @throws SocketException raised if I cannot open the socket.
      */
     public void initSocket() throws SocketException {
-        System.out.println("Open socket");
+        this.log("Open socket");
         this.socket = new DatagramSocket(SOCKET);
     }
 
@@ -34,18 +34,18 @@ public class ServerUDP extends AbstractServer {
      */
     public void launch() throws IOException {
         while (!this.stop) {
-            System.out.println("Wait for a message...");
+            this.log("Wait for a message...");
             DatagramPacket packet = new DatagramPacket(new byte[SIZEPACKET], SIZEPACKET);
             this.socket.receive(packet);
 
-            System.out.println("Get data");
+            this.log("Read data");
             byte[] array = packet.getData();
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < packet.getLength(); i++) {
                 builder.append((char) array[i]);
             }
 
-            System.out.println("Execute action");
+            this.log("Execute action : " + builder.toString());
             String[] receivedMessages = builder.toString().split(" ", 2);
             String rest;
             try {
@@ -55,7 +55,7 @@ public class ServerUDP extends AbstractServer {
             }
             String result = this.commands.getOrDefault(receivedMessages[0], this.commands.get("error")).apply(rest, this.gui);
 
-            System.out.println("Send result");
+            this.log("Send result : " + result);
             (new DatagramSocket()).send(new DatagramPacket(result.getBytes(), result.length(), packet.getAddress(), packet.getPort()));
 
         }
@@ -65,7 +65,7 @@ public class ServerUDP extends AbstractServer {
      * I stop the server and close the socket.
      */
     public void stop() {
-        System.out.println("Stop server.");
+        this.log("Stop server.");
         this.stop = true;
         this.socket.close();
     }
